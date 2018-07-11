@@ -23,7 +23,15 @@ Next in appsettings.json add the following and modify where necessary:
         "ServerPort": 514,
         "HeaderType": "Rfc5424v1",
         "FacilityType": "Local0",
-        "UseUtc": true
+        "UseUtc": true,
+        "StructuredData": [ 
+          {
+            "Id": "mydata",
+            "Elements": [
+              { "Name": "tag", "Value": "MyTag" }
+            ]
+          }
+        ]
       }
     }
 
