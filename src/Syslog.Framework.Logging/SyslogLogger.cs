@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
+using System.Xml;
 
 namespace Syslog.Framework.Logging
 {
@@ -132,7 +133,7 @@ namespace Syslog.Framework.Logging
 	/// </summary>
 	public class Syslog5424v1Logger : SyslogLogger
 	{
-		private readonly StringTemplate _tmpl = new StringTemplate("<{priority}>1 {now:yyyy-MM-ddTHH:mm:ss} {host} {name} {procid} {msgid}{data} {message}");
+		private readonly StringTemplate _tmpl = new StringTemplate("<{priority}>1 {now:o} {host} {name} {procid} {msgid}{data} {message}");
 		private readonly string _structuredData;
 
 		public Syslog5424v1Logger(string name, SyslogLoggerSettings settings, string host, LogLevel lvl)
@@ -143,8 +144,9 @@ namespace Syslog.Framework.Logging
 
 		private string FormatStructuredData(SyslogLoggerSettings settings)
 		{
-			if (settings.StructuredData.Count == 0) return null;
-
+			if (settings.StructuredData == null) return null;
+			if (settings.StructuredData.Count() == 0) return null;
+			
 			var sb = new StringBuilder();
 			sb.Append(" "); // Need to add a space to separate what came before it.
 			foreach (var data in settings.StructuredData)
@@ -153,17 +155,20 @@ namespace Syslog.Framework.Logging
 					throw new InvalidOperationException($"ID for structured data {data.Id} is not valid. US Ascii 33-126 only, except '=', ' ', ']', '\"'");
 
 				sb.Append($"[{data.Id}");
-				foreach (var element in data.Elements)
+				if (data.Elements != null)
 				{
-					if (!IsValidPrintAscii(element.Name, '=', ' ', ']', '"'))
-						throw new InvalidOperationException($"Element {element.Name} in structured data {data.Id} is not valid. US Ascii 33-126 only, except '=', ' ', ']', '\"'");
+					foreach (var element in data.Elements)
+					{
+						if (!IsValidPrintAscii(element.Name, '=', ' ', ']', '"'))
+							throw new InvalidOperationException($"Element {element.Name} in structured data {data.Id} is not valid. US Ascii 33-126 only, except '=', ' ', ']', '\"'");
 
-					// According to spec, need to escape these characters.
-					var val = element.Value
-						.Replace("\\", "\\\\")
-						.Replace("\"", "\\\"")
-						.Replace("]", "\\]");
-					sb.Append($" {element.Name}=\"{val}\"");
+						// According to spec, need to escape these characters.
+						var val = element.Value
+							.Replace("\\", "\\\\")
+							.Replace("\"", "\\\"")
+							.Replace("]", "\\]");
+						sb.Append($" {element.Name}=\"{val}\"");
+					}
 				}
 				sb.Append("]");
 			}

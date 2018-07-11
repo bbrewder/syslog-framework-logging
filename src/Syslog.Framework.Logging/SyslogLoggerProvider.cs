@@ -4,32 +4,32 @@ using Microsoft.Extensions.Logging;
 
 namespace Syslog.Framework.Logging
 {
-    public class SyslogLoggerProvider : ILoggerProvider
-    {
-        private SyslogLoggerSettings _settings;
-        private string _hostName;
-        private LogLevel _logLevel;
-        private IDictionary<string, ILogger> _loggers;
+	public class SyslogLoggerProvider : ILoggerProvider
+	{
+		private SyslogLoggerSettings _settings;
+		private string _hostName;
+		private LogLevel _logLevel;
+		private IDictionary<string, ILogger> _loggers;
 
-        public SyslogLoggerProvider(SyslogLoggerSettings settings, string hostName, LogLevel logLevel)
-        {
-            _settings = settings;
-            _hostName = hostName;
-            _logLevel = logLevel;
-            _loggers = new Dictionary<string, ILogger>();
-        }
+		public SyslogLoggerProvider(SyslogLoggerSettings settings, string hostName, LogLevel logLevel)
+		{
+			_settings = settings;
+			_hostName = hostName;
+			_logLevel = logLevel;
+			_loggers = new Dictionary<string, ILogger>();
+		}
 
-        public ILogger CreateLogger(string name)
-        {
+		public ILogger CreateLogger(string name)
+		{
 			if (!_loggers.ContainsKey(name))
 				_loggers[name] = CreateLoggerInstance(name);
 
-            return _loggers[name];
-        }
+			return _loggers[name];
+		}
 
 		private ILogger CreateLoggerInstance(string name)
 		{
-			switch(_settings.HeaderType)
+			switch (_settings.HeaderType)
 			{
 				case SyslogHeaderType.Rfc3164:
 					return new Syslog3164Logger(name, _settings, _hostName, _logLevel);
@@ -40,9 +40,14 @@ namespace Syslog.Framework.Logging
 			}
 		}
 
-        public void Dispose()
-        {
-            _loggers.Clear();
-        }
-    }
+		public ILogger CreateLogger<T>()
+		{
+			return CreateLogger(typeof(T).FullName);
+		}
+
+		public void Dispose()
+		{
+			_loggers.Clear();
+		}
+	}
 }

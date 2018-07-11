@@ -14,12 +14,12 @@ namespace Syslog.Framework.Logging
 		/// <summary>
 		/// Gets or sets the host for the Syslog server.
 		/// </summary>
-		public string ServerHost { get; set; }
+		public string ServerHost { get; set; } = "127.0.0.1";
 
 		/// <summary>
 		/// Gets or sets the port for the Syslog server.
 		/// </summary>
-		public int ServerPort { get; set; }
+		public int ServerPort { get; set; } = 514;
 
 		/// <summary>
 		/// Gets or sets the facility type.
@@ -34,7 +34,7 @@ namespace Syslog.Framework.Logging
 		/// <summary>
 		/// Structured data that is sent with every request. Only for RFC 5424.
 		/// </summary>
-		public List<SyslogStructuredData> StructuredData { get; private set; } = new List<SyslogStructuredData>();
+		public IEnumerable<SyslogStructuredData> StructuredData { get; set; }
 
 		/// <summary>
 		/// Gets or sets whether to log messages using UTC or local time. Defaults to true (UTC).
@@ -44,12 +44,19 @@ namespace Syslog.Framework.Logging
 		#endregion
 
 	}
-	
+
 	/// <summary>
 	/// Allows sending of structured data in RFC 5424.
 	/// </summary>
 	public class SyslogStructuredData
 	{
+
+		/// <summary>
+		/// Creates an instance of SyslogStructuredData.
+		/// </summary>
+		public SyslogStructuredData()
+		{
+		}
 
 		/// <summary>
 		/// Creates an instance of SyslogStructuredData.
@@ -63,12 +70,12 @@ namespace Syslog.Framework.Logging
 		/// <summary>
 		/// Gets the ID for the structured data.
 		/// </summary>
-		public string Id { get; private set; }
+		public string Id { get; set; }
 
 		/// <summary>
 		/// Gets the list of structured data elements.
 		/// </summary>
-		public List<SylogStructuredDataElement> Elements { get; private set; } = new List<SylogStructuredDataElement>();
+		public IEnumerable<SylogStructuredDataElement> Elements { get; set; }
 
 	}
 
@@ -77,6 +84,13 @@ namespace Syslog.Framework.Logging
 	/// </summary>
 	public class SylogStructuredDataElement
 	{
+
+		/// <summary>
+		/// Creates an instance of SylogStructuredDataElement.
+		/// </summary>
+		public SylogStructuredDataElement()
+		{
+		}
 
 		/// <summary>
 		/// Creates an instance of SylogStructuredDataElement.
@@ -92,12 +106,12 @@ namespace Syslog.Framework.Logging
 		/// <summary>
 		/// Gets the name of the element.
 		/// </summary>
-		public string Name { get; private set; }
+		public string Name { get; set; }
 
 		/// <summary>
 		/// Gets the value of the element.
 		/// </summary>
-		public string Value { get; private set; }
+		public string Value { get; set; }
 
 	}
 }
