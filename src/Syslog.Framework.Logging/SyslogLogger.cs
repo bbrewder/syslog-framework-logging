@@ -6,7 +6,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
-using System.Xml;
 
 namespace Syslog.Framework.Logging
 {

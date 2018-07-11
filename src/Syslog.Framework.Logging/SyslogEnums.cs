@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Syslog.Framework.Logging
+﻿namespace Syslog.Framework.Logging
 {
 
 	/// <summary>
