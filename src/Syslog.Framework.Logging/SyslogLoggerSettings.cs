@@ -4,7 +4,6 @@ namespace Syslog.Framework.Logging
 {
 	public class SyslogLoggerSettings
 	{
-
 		#region Fields and Methods
 
 		/// <summary>
@@ -38,7 +37,6 @@ namespace Syslog.Framework.Logging
 		public bool UseUtc { get; set; } = false; // Default to false to be backwards compatible with v1.
 
 		#endregion
-
 	}
 
 	/// <summary>
@@ -46,7 +44,6 @@ namespace Syslog.Framework.Logging
 	/// </summary>
 	public class SyslogStructuredData
 	{
-
 		/// <summary>
 		/// Creates an instance of SyslogStructuredData.
 		/// </summary>
@@ -72,7 +69,6 @@ namespace Syslog.Framework.Logging
 		/// Gets the list of structured data elements.
 		/// </summary>
 		public IEnumerable<SylogStructuredDataElement> Elements { get; set; }
-
 	}
 
 	/// <summary>
@@ -80,7 +76,6 @@ namespace Syslog.Framework.Logging
 	/// </summary>
 	public class SylogStructuredDataElement
 	{
-
 		/// <summary>
 		/// Creates an instance of SylogStructuredDataElement.
 		/// </summary>
@@ -108,6 +103,5 @@ namespace Syslog.Framework.Logging
 		/// Gets the value of the element.
 		/// </summary>
 		public string Value { get; set; }
-
 	}
 }

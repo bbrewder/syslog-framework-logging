@@ -1,6 +1,4 @@
-﻿using BizArk.Core.Extensions.StringExt;
-using BizArk.Core.Util;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -39,15 +37,18 @@ namespace Syslog.Framework.Logging
 			if (formatter == null)
 				throw new ArgumentNullException(nameof(formatter));
 
-			if (!IsEnabled(logLevel)) return;
+			if (!IsEnabled(logLevel))
+                return;
 
 			string message = formatter(state, exception);
-			if (String.IsNullOrEmpty(message)) return;
+
+			if (String.IsNullOrEmpty(message))
+                return;
 
 			// Defined in RFC 5424, section 6.2.1, and RFC 3164, section 4.1.1.
 			// If a different value is needed, then this code should probably move into the specific loggers.
 			var severity = MapToSeverityType(logLevel);
-			var priority = ((int)_settings.FacilityType * 8) + (int)severity; // (Facility * 8) + Severity = Priority
+			var priority = ((int)_settings.FacilityType * 8) + (int)severity;
 			var procid = GetProcID();
 			var now = _settings.UseUtc ? DateTime.UtcNow : DateTime.Now;
 			var msg = FormatMessage(priority, now, _host, _name, procid, eventId.Id, message);
@@ -97,7 +98,6 @@ namespace Syslog.Framework.Logging
 					return SeverityType.Debug;
 			}
 		}
-
 	}
 
 	/// <summary>
@@ -105,9 +105,6 @@ namespace Syslog.Framework.Logging
 	/// </summary>
 	public class Syslog3164Logger : SyslogLogger
 	{
-
-		private readonly StringTemplate _tmpl = new StringTemplate("<{priority}>{now:MMM dd HH:mm:ss} {host} {tag} {message}");
-
 		public Syslog3164Logger(string name, SyslogLoggerSettings settings, string host, LogLevel lvl)
 			: base(name, settings, host, lvl)
 		{
@@ -115,16 +112,10 @@ namespace Syslog.Framework.Logging
 
 		protected override string FormatMessage(int priority, DateTime now, string host, string name, int procid, int msgid, string message)
 		{
-			return _tmpl.Format(new
-			{
-				priority,
-				now,
-				host,
-				tag = name.Replace(".", "").Replace("_", "").Left(32), // Alphanumeric, Max length is 32 according to spec
-				message
-			});
+            var tag = name.Replace(".", String.Empty).Replace("_", String.Empty); // Alphanumeric
+            tag = tag.Substring(0, Math.Min(32, tag.Length)); // Max length is 32 according to spec
+            return $"<{priority}>{now:MMM dd HH:mm:ss} {host} {tag} {message}";
 		}
-
 	}
 
 	/// <summary>
@@ -132,7 +123,6 @@ namespace Syslog.Framework.Logging
 	/// </summary>
 	public class Syslog5424v1Logger : SyslogLogger
 	{
-		private readonly StringTemplate _tmpl = new StringTemplate("<{priority}>1 {now:o} {host} {name} {procid} {msgid}{data} {message}");
 		private readonly string _structuredData;
 
 		public Syslog5424v1Logger(string name, SyslogLoggerSettings settings, string host, LogLevel lvl)
@@ -143,17 +133,22 @@ namespace Syslog.Framework.Logging
 
 		private string FormatStructuredData(SyslogLoggerSettings settings)
 		{
-			if (settings.StructuredData == null) return null;
-			if (settings.StructuredData.Count() == 0) return null;
+			if (settings.StructuredData == null)
+                return null;
+
+			if (settings.StructuredData.Count() == 0)
+                return null;
 			
 			var sb = new StringBuilder();
 			sb.Append(" "); // Need to add a space to separate what came before it.
+
 			foreach (var data in settings.StructuredData)
 			{
 				if (!IsValidPrintAscii(data.Id, '=', ' ', ']', '"'))
 					throw new InvalidOperationException($"ID for structured data {data.Id} is not valid. US Ascii 33-126 only, except '=', ' ', ']', '\"'");
 
 				sb.Append($"[{data.Id}");
+
 				if (data.Elements != null)
 				{
 					foreach (var element in data.Elements)
@@ -169,7 +164,8 @@ namespace Syslog.Framework.Logging
 						sb.Append($" {element.Name}=\"{val}\"");
 					}
 				}
-				sb.Append("]");
+
+                sb.Append("]");
 			}
 
 			return sb.ToString();
@@ -182,13 +178,17 @@ namespace Syslog.Framework.Logging
 		/// <returns></returns>
 		private bool IsValidPrintAscii(string name, params char[] invalid)
 		{
-			if (name.IsEmpty()) return false;
+			if (String.IsNullOrEmpty(name))
+                return false;
 
 			foreach (var ch in name)
 			{
-				if (ch < 33) return false;
-				if (ch > 126) return false;
-				if (invalid.Contains(ch)) return false;
+				if (ch < 33)
+                    return false;
+				if (ch > 126)
+                    return false;
+				if (invalid.Contains(ch))
+                    return false;
 			}
 
 			return true;
@@ -196,19 +196,8 @@ namespace Syslog.Framework.Logging
 
 		protected override string FormatMessage(int priority, DateTime now, string host, string name, int procid, int msgid, string message)
 		{
-			return _tmpl.Format(new
-			{
-				priority,
-				now,
-				host,
-				name,
-				procid,
-				msgid,
-				data = _structuredData ?? "",
-				message
-			});
+            var data = _structuredData ?? String.Empty;
+            return $"<{priority}>1 {now:o} {host} {name} {procid} {msgid}{data} {message}";
 		}
-
 	}
-
 }

@@ -1,6 +1,5 @@
 ﻿namespace Syslog.Framework.Logging
 {
-
 	/// <summary>
 	/// Different header formats that are available.
 	/// </summary>
@@ -42,5 +41,4 @@
 	}
 
 	internal enum SeverityType { Emergency, Alert, Critical, Error, Warning, Notice, Informational, Debug };
-
 }

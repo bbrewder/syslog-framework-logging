@@ -5,7 +5,6 @@ namespace Syslog.Framework.Logging
 {
 	public static class SyslogLoggerFactoryExtensions
 	{
-
 		public static void AddSyslog(this ILoggerFactory loggerFactory, IConfigurationSection section, string hostName = null, LogLevel logLevel = LogLevel.Debug)
 		{
 			var settings = new SyslogLoggerSettings();
@@ -29,6 +28,5 @@ namespace Syslog.Framework.Logging
 		{
 			logbldr.AddProvider(new SyslogLoggerProvider(settings, hostName ?? System.Environment.MachineName, logLevel));
 		}
-
 	}
 }

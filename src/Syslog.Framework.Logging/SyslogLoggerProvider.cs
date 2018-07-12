@@ -6,10 +6,10 @@ namespace Syslog.Framework.Logging
 {
 	public class SyslogLoggerProvider : ILoggerProvider
 	{
-		private SyslogLoggerSettings _settings;
-		private string _hostName;
-		private LogLevel _logLevel;
-		private IDictionary<string, ILogger> _loggers;
+		private readonly SyslogLoggerSettings _settings;
+		private readonly string _hostName;
+		private readonly LogLevel _logLevel;
+		private readonly IDictionary<string, ILogger> _loggers;
 
 		public SyslogLoggerProvider(SyslogLoggerSettings settings, string hostName, LogLevel logLevel)
 		{

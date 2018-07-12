@@ -67,10 +67,8 @@ using System;
 
 namespace MySyslogConsoleApp
 {
-
   class Program
   {
-
     public readonly static SyslogLoggerProvider mLoggingProvider;
     public readonly static ILogger mLogger;
 
@@ -93,15 +91,12 @@ namespace MySyslogConsoleApp
 
   public class MyAwesomeClass
   {
-  
     private static readonly ILogger mLogger = Program.mLoggingProvider.CreateLogger<MyAwesomeClass>();
     
     public void DoSomethingAmazing()
     {
       mLogger.LogCritical("I just did something awe inspiring!");
     }
-  
   }
-
 }
 ```
